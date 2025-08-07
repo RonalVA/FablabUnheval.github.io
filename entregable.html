@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Entregables – POI iHUb UNHEVAL</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .contenedor-central {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="file"] {
+      margin-bottom: 10px;
+      display: block;
+      width: 100%;
+      padding: 5px;
+    }
+
+    button {
+      padding: 8px 16px;
+      margin: 8px 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .borrar-btn {
+      background-color: #dc3545;
+    }
+
+    .borrar-btn:hover {
+      background-color: #a71d2a;
+    }
+
+    .avance {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-bottom: 20px;
+    }
+
+    footer button {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Registro de Entregables – POI iHUb UNHEVAL</h1>
+    <p>Sube archivos por tarea y registra el avance con respecto a la meta establecida.</p>
+  </header>
+
+  <div class="contenedor-central">
+    <div id="formulario"></div>
+  </div>
+
+  <footer>
+    <button onclick="window.location.href='index.html'">🏠 Volver a Inicio</button>
+    <button onclick="window.location.href='dashboard.html'">📊 Ir al Dashboard</button>
+    <button onclick="window.location.href='entregable.html'">📁 Ir a Entregable</button>
+  </footer>
+
+  <script>
+    const tareas = [
+      { nombre: "1. Elaborar expediente para renovación/actualización del equipamiento del Centro de Innovación", meta: 1 },
+      { nombre: "2. Apoyo en el desarrollo de proyectos de innovación asociado a empresas/instituciones", meta: 2 },
+      { nombre: "3. Apoyo a los estudiantes en la fabricación de maquetas o prototipos de los proyectos de innovación", meta: 20 },
+      { nombre: "4. Actividades para la adquisición con bienes de capital, equipos, herramientas, insumos y servicios requeridos.", meta: 8 },
+      { nombre: "5. Desarrollo de cursos y talleres de innovación y tecnologia", meta: 5 }
+    ];
+
+    const contenedor = document.getElementById('formulario');
+
+    tareas.forEach((tarea, index) => {
+      const id = index + 1;
+      const avanceGuardado = localStorage.getItem(`avance_t${id}`) || 0;
+
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <h3>${tarea.nombre}</h3>
+        <p><strong>Meta:</strong> ${tarea.meta}</p>
+        <label for="file${id}">Subir archivo:</label>
+        <input type="file" id="file${id}"/>
+        <button onclick="registrar(${id}, ${tarea.meta})">Registrar</button>
+        <button class="borrar-btn" onclick="borrar(${id}, ${tarea.meta})">🗑️ Borrar Registro</button>
+        <div class="avance" id="avance${id}">Avance: ${avanceGuardado} / Meta: ${tarea.meta}</div>
+      `;
+      contenedor.appendChild(div);
+    });
+
+    function registrar(id, meta) {
+      const archivo = document.getElementById(`file${id}`).files[0];
+
+      if (!archivo) {
+        alert("Debes subir un archivo antes de registrar.");
+        return;
+      }
+
+      let avance = parseInt(localStorage.getItem(`avance_t${id}`) || 0);
+      if (avance < meta) {
+        avance += 1;
+        localStorage.setItem(`avance_t${id}`, avance);
+      }
+
+      document.getElementById(`avance${id}`).innerText = `Avance: ${avance} / Meta: ${meta}`;
+      document.getElementById(`file${id}`).value = '';
+    }
+
+    function borrar(id, meta) {
+      localStorage.removeItem(`avance_t${id}`);
+      document.getElementById(`file${id}`).value = '';
+      document.getElementById(`avance${id}`).innerText = `Avance: 0 / Meta: ${meta}`;
+    }
+  </script>
+</body>
+</html>
