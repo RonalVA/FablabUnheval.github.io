@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard POI – iHUb UNHEVAL</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      margin: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .task-charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      max-width: 1000px;
+      margin: 0 auto 40px;
+    }
+
+    .task-charts .chart-container {
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .summary-charts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .summary-charts .chart-container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      flex: 1 1 400px;
+      max-width: 500px;
+    }
+
+    
+
+    .porcentaje {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+   
+
+    canvas {
+      margin-top: 10px;
+      /* Agrega esto para cambiar el tamaño */
+      width: 200px;
+      height: 200px;
+    }
+
+    canvas[id^="barChart"] {
+      max-width: 400px;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+    }
+
+
+    #barChart {
+      width: 100% !important;
+      max-width: 700px;
+      height: 300px !important;
+      margin: 0 auto;
+    }
+    #pieChart {
+      width: 100% !important;
+      max-width: 300px;
+      height: auto !important;
+      display: block;
+      margin: 0 auto;
+    }
+
+
+    
+
+    .container {
+      max-width: 950px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .resumen-individual {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .progress-bar-container {
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      height: 20px;
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      line-height: 20px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .bar-rojo {
+      background-color: #e74c3c;
+    }
+
+    .bar-ambar {
+      background-color: #f39c12;
+    }
+
+    .bar-verde {
+      background-color: #2ecc71;
+    }
+
+  </style>
+  
+</head>
+<body>
+
+  <h1>Dashboard POI – Avance General</h1>
+   
+  <!-- Resumen individual (porcentajes individuales en texto) -->
+  <!--<div class="resumen-individual" id="resumenIndividual"></div>-->
+  <div class="container">
+    <!--<h2>📊 Dashboard de Avance</h2>-->
+
+    <div class="resumen-individual" id="resumenIndividual">
+      <div class="resumen-tareas">
+        <p>📌 Tarea 1: 0.0% (0/1)</p>
+        <div class="progress-bar-container">
+          <div class="progress-bar bar-rojo" style="width: 0%">0%</div>
+        </div>
+    
+        <p>📌 Tarea 2: 0.0% (0/2)</p>
+        <div class="progress-bar-container">
+          <div class="progress-bar bar-rojo" style="width: 0%">0%</div>
+        </div>
+    
+        <p>📌 Tarea 3: 45.0% (9/20)</p>
+        <div class="progress-bar-container">
+          <div class="progress-bar bar-ambar" style="width: 45%">45%</div>
+        </div>
+    
+        <p>📌 Tarea 4: 0.0% (0/8)</p>
+        <div class="progress-bar-container">
+          <div class="progress-bar bar-rojo" style="width: 0%">0%</div>
+        </div>
+    
+        <p>📌 Tarea 5: 0.0% (0/5)</p>
+        <div class="progress-bar-container">
+          <div class="progress-bar bar-rojo" style="width: 0%">0%</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+
+  <!-- Gráficos individuales por tarea -->
+  <div class="task-charts" id="graficosTareas"></div>
+
+ 
+
+  <!-- Resumen gráfico: barras y doughnut -->
+  <div class="summary-charts" style="display: flex; justify-content: center;">
+    
+  </div>
+
+  <div class="summary-charts" style="display: flex; justify-content: center; margin-top: 20px;">
+    <div class="chart-container" style="width: 600px; height: 400px;">
+      <h3>Resumen General – Avance por Tarea</h3>
+      <canvas id="barChart" width="600" height="400"></canvas>
+    </div>
+    <div class="chart-container" style="width: 500px; height: 400px;">
+      <h3>Distribución General</h3>
+      <canvas id="doughnutChart" width="500" height="400"></canvas>
+      <div class="porcentaje" id="porcentajeGlobal"></div>
+    </div>
+  </div>
+
+  
+
+  <footer>
+    <div class="footer-buttons">
+      <button onclick="window.location.href='index.html'">🏠 Ir a Inicio</button>
+      <button onclick="window.location.href='entregable.html'">📄 Ver Entregables</button>
+    </div>
+    <p>© 2025 iHUb UNHEVAL</p>
+  </footer>
+
+ 
+ <script>
+    const tareas = [
+      { nombre: "Tarea 1", meta: 1 },
+      { nombre: "Tarea 2", meta: 2 },
+      { nombre: "Tarea 3", meta: 20 },
+      { nombre: "Tarea 4", meta: 8 },
+      { nombre: "Tarea 5", meta: 5 }
+    ];
+   
+    const avances = tareas.map((t, i) => parseInt(localStorage.getItem(`avance_t${i + 1}`) || 0));
+    const pendientes = tareas.map((t, i) => Math.max(0, t.meta - avances[i]));
+
+    function getColor(porcentaje) {
+      if (porcentaje >= 70) return '#28a745'; // Verde
+      if (porcentaje >= 30) return '#ffc107'; // Ámbar
+      return '#dc3545'; // Rojo
+    }  
+
+    // Resumen individual
+    const resumenDiv = document.getElementById("resumenIndividual");
+    resumenDiv.innerHTML = tareas.map((t, i) => {
+      const porcentaje = ((avances[i] / t.meta) * 100).toFixed(1);
+      const color = getColor(porcentaje);
+      return `📌 <strong>${t.nombre}:</strong> <span style="color:${color}">${porcentaje}% (${avances[i]}/${t.meta})</span>`;
+    }).join("<br>");
+
+    // Gráficos individuales por tarea
+    const graficoDiv = document.getElementById("graficosTareas");
+    tareas.forEach((t, i) => {
+      const porcentaje = (avances[i] / t.meta) * 100;
+      const avance = avances[i];
+      const pendiente = Math.max(0, t.meta - avance);
+
+      const chartId = `tareaChart${i}`;
+      const container = document.createElement("div");
+      container.className = "chart-container";
+      container.innerHTML = `
+        <h4>${t.nombre}</h4>
+        <canvas id="${chartId}"></canvas>
+        <div class="porcentaje">${porcentaje.toFixed(1)}%</div>
+      `;
+      graficoDiv.appendChild(container);
+
+      const ctx = document.getElementById(chartId).getContext("2d");
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Avance', 'Pendiente'],
+          datasets: [{
+            data: [avance, pendiente],
+            backgroundColor: [getColor(porcentaje), '#e0e0e0']
+          }]
+        },
+        options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.label}: ${context.raw} (${((context.raw / t.meta) * 100).toFixed(1)}%)`
+              }
+            },
+            legend: { display: false }
+          }
+        }
+      });
+    });
+
+    // Gráfico de barras
+    const totalAvance = avances.reduce((a, b) => a + b, 0);
+    const totalMeta = tareas.reduce((a, b) => a + b.meta, 0);
+    const totalPendiente = totalMeta - totalAvance;
+    const porcentajeGlobal = ((totalAvance / totalMeta) * 100).toFixed(1);
+
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: tareas.map(t => t.nombre),
+        datasets: [
+          {
+            label: 'Avance',
+            data: avances,
+            backgroundColor: avances.map((a, i) => getColor((a / tareas[i].meta) * 100))
+          },
+          {
+            label: 'Pendiente',
+            data: pendientes,
+            backgroundColor: 'rgba(220, 53, 69, 0.7)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: { mode: 'index', intersect: false },
+          legend: { position: 'top' },
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            formatter: (value, context) => {
+              const total = tareas[context.dataIndex].meta;
+              const porcentaje = ((value / total) * 100).toFixed(1);
+              return `${porcentaje}%`;
+            },
+            color: '#000',
+            font: { weight: 'bold' }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            precision: 0
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+
+    // Doughnut general
+    const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+    new Chart(ctxDoughnut, {
+      type: 'doughnut',
+      data: {
+        labels: ['Avance', 'Pendiente'],
+        datasets: [{
+          data: [totalAvance, totalPendiente],
+          backgroundColor: [getColor(porcentajeGlobal), '#e0e0e0']
+        }]
+      },
+      options: {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.raw} (${((context.raw / totalMeta) * 100).toFixed(1)}%)`
+            }
+          },
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    document.getElementById('porcentajeGlobal').textContent = `Avance Total: ${porcentajeGlobal}%`;
+  </script>
+</body>
+</html>
+
